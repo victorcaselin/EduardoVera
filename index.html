@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tienda de Agroquímicos</title>
+  <style>
+    /* -------------------------------------
+       1) RESET BÁSICO Y ESTILOS GENERALES
+    ------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      color: #333;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* -------------------------------------
+       2) BARRA SUPERIOR
+    ------------------------------------- */
+    .top-bar {
+      background-color: #2A2E8A;
+      color: #FFF;
+      padding: 5px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .top-bar .left,
+    .top-bar .right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .top-bar .icon {
+      margin-right: 5px;
+    }
+
+    /* -------------------------------------
+       3) ENCABEZADO PRINCIPAL (LOGO, MENÚ, BÚSQUEDA)
+    ------------------------------------- */
+    header {
+      background-color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    /* LOGO */
+    .logo img {
+      max-height: 50px; /* Ajusta según tu logotipo */
+    }
+
+    /* MENÚ PRINCIPAL (4 OPCIONES) */
+    .main-nav {
+      list-style: none;
+      display: flex;
+      gap: 30px; /* Separación entre opciones */
+      align-items: center;
+    }
+    .main-nav > li {
+      position: relative; /* Para posicionar submenús */
+    }
+    .main-nav a {
+      font-size: 16px;
+      padding: 8px 0;
+      color: #444;
+      display: block;
+      font-weight: 500;
+    }
+
+    /* SUBMENÚ (oculto por defecto) */
+    .submenu {
+      position: absolute;
+      top: 30px;
+      left: 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      min-width: 140px;
+      list-style: none;
+      display: none; /* Oculto inicialmente */
+      z-index: 999;
+    }
+    .submenu li {
+      border-bottom: 1px solid #eee;
+    }
+    .submenu li:last-child {
+      border-bottom: none;
+    }
+    .main-nav li:hover > .submenu {
+      display: block; /* Muestra el submenú al pasar el cursor */
+    }
+    .submenu a {
+      padding: 8px;
+      color: #333;
+    }
+    .submenu a:hover {
+      background-color: #f2f2f2;
+      color: #009929; /* Color al hover */
+    }
+
+    /* BARRA DE BÚSQUEDA */
+    .search-container {
+      display: flex;
+      align-items: center;
+      border: 1px solid #999;
+      padding: 5px;
+    }
+    .search-container input {
+      border: none;
+      outline: none;
+      padding: 5px;
+      font-size: 14px;
+    }
+    .search-container button {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* -------------------------------------
+       4) BOTONES (HOVER)
+    ------------------------------------- */
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #2A2E8A;
+      color: #FFF;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #009929; 
+    }
+
+    /* -------------------------------------
+       5) SECCIÓN HERO con CARRUSEL
+    ------------------------------------- */
+    .hero-carousel {
+      position: relative;
+      width: 100%;
+      height: 400px; /* Ajusta la altura del carrusel */
+      overflow: hidden;
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease; 
+      width: 100%;
+      height: 100%;
+    }
+    .carousel-slide {
+      min-width: 100%;
+      height: 100%;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+    }
+    /* Ejemplo de 4 slides con distintas imágenes de fondo */
+    .slide-1 { background-image: url('alfa.jpg'); }
+    .slide-2 { background-image: url('lechu.jpg'); }
+    .slide-3 { background-image: url('espi.jpg'); }
+    .slide-4 { background-image: url('cila.jpg'); }
+
+    /* Botones de navegación del carrusel */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .carousel-btn:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .prev-btn {
+      left: 10px;
+    }
+    .next-btn {
+      right: 10px;
+    }
+
+    /* Contenido superpuesto (texto de bienvenida) */
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      text-align: center;
+      max-width: 600px;
+      z-index: 2;
+    }
+    .hero-content h1 {
+      font-size: 40px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      line-height: 1.2;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+    .hero-content p.subtitulo-hero {
+      font-size: 18px;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    }
+    .mensaje-bienvenida {
+      font-style: italic;
+      font-size: 16px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    }
+
+    /* -------------------------------------
+       6) SECCIÓN DE PRODUCTOS EN GENERAL (CON IMÁGENES)
+    ------------------------------------- */
+    .productos-generales {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin: 30px 20px;
+      gap: 20px;
+    }
+    .producto-general {
+      flex: 1;
+      min-width: 250px;
+      background-color: #FFF;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+      text-align: left;
+    }
+    .producto-general h2 {
+      margin-bottom: 15px;
+      color: #2E7D32; 
+    }
+    .producto-general p {
+      margin-bottom: 10px;
+    }
+    .producto-general ul {
+      list-style: none;
+      margin-bottom: 10px;
+    }
+    .producto-general li {
+      padding: 5px 0;
+    }
+    /* Imagen dentro del producto general */
+    .producto-general img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    /* -------------------------------------
+       7) GALERÍA DE PRODUCTOS (HOVER, TOOLTIP, DESCUENTO)
+    ------------------------------------- */
+    .productos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin: 0 20px 40px;
+    }
+    .producto-card {
+      width: 220px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      position: relative;
+      overflow: hidden;
+      background-color: #FFF;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .producto-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .producto-imagen {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background-color: #f0f0f0;
+    }
+    .producto-info {
+      padding: 10px;
+    }
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      width: 80%;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 5px;
+      position: absolute;
+      left: 10%;
+      bottom: 50px;
+      transition: opacity 0.3s ease;
+      font-size: 12px;
+      z-index: 10;
+    }
+    .producto-card:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    .descuento-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #009929;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: bold;
+      animation: latido 1s infinite alternate;
+    }
+    @keyframes latido {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.2); }
+    }
+
+    /* -------------------------------------
+       8) PIE DE PÁGINA
+    ------------------------------------- */
+    footer {
+      background-color: #F0F0F0;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR -->
+  <div class="top-bar">
+    <div class="left">
+      <div class="servicio-cliente">
+        <span class="icon">👤</span> 
+        <span>Jose Eduardo Vera Octaviano</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="telefono">
+        <span class="icon">📞</span>
+        <span>TI44990</span>
+      </div>
+      <div class="correo">
+        <span class="icon">✉️</span>
+        <span>TI44990@uvp.edu.mx</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header>
+    <!-- LOGO -->
+    <div class="logo">
+      <a href="#">
+        <img src="logo.jpg" alt="Logo Tienda Agroquímicos">
+      </a>
+    </div>
+
+    <!-- MENÚ (4 OPCIONES) -->
+    <nav>
+      <ul class="main-nav">
+        <li><a href="#">Inicio</a></li>
+
+        <li>
+          <a href="#">Semillas</a>
+          <ul class="submenu">
+            <li><a href="#">Sanida</a></li>
+            <li><a href="#">Calabaza</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#">Químicos</a>
+          <ul class="submenu">
+            <li><a href="#">Insecticidas</a></li>
+            <li><a href="#">Fungicidas</a></li>
+            <li><a href="#">Herbicidas</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#">Servicios</a>
+          <ul class="submenu">
+            <li><a href="#">Contacto</a></li>
+            <li><a href="#">Cotizaciones</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- BARRA DE BÚSQUEDA -->
+    <div class="search-container">
+      <input type="text" placeholder="BUSCAR">
+      <button type="submit">🔎</button>
+    </div>
+  </header>
+
+  <!-- HERO con CARRUSEL -->
+  <section class="hero-carousel">
+    <div class="carousel-track" id="carouselTrack">
+      <div class="carousel-slide slide-1"></div>
+      <div class="carousel-slide slide-2"></div>
+      <div class="carousel-slide slide-3"></div>
+      <div class="carousel-slide slide-4"></div>
+    </div>
+    <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
+    <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
+
+    <!-- Contenido superpuesto (texto de bienvenida) -->
+    <div class="hero-content">
+      <h1>Tienda de Agroquímicos</h1>
+      <p class="subtitulo-hero">
+        Todo lo que necesitas para tus cultivos y asesoría especializada.
+      </p>
+      <div class="mensaje-bienvenida" id="mensaje-bienvenida"></div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE PRODUCTOS EN GENERAL (CON IMÁGENES) -->
+  <section class="productos-generales">
+    <!-- Producto general 1 -->
+    <div class="producto-general">
+      <!-- Imagen del producto -->
+      <img src="her.jpg" alt="Producto General 1">
+      <h2>Producto General 1</h2>
+      <p>Descripción breve o destacada del producto.</p>
+      <ul>
+        <li>Característica 1</li>
+        <li>Característica 2</li>
+        <li>Característica 3</li>
+      </ul>
+      <button class="btn">Ver más</button>
+    </div>
+
+    <!-- Producto general 2 -->
+    <div class="producto-general">
+      <img src="insect.jpg" alt="Producto General 2">
+      <h2>Producto General 2</h2>
+      <p>Breve descripción del producto.</p>
+      <ul>
+        <li>Atributo A</li>
+        <li>Atributo B</li>
+      </ul>
+      <button class="btn">Ver más</button>
+    </div>
+
+    <!-- Producto general 3 -->
+    <div class="producto-general">
+      <img src="sandia1.jpg" alt="Producto General 3">
+      <h2>Producto General 3</h2>
+      <p>Descripción o resumen informativo.</p>
+      <ul>
+        <li>Característica X</li>
+        <li>Característica Y</li>
+      </ul>
+      <button class="btn">Ver más</button>
+    </div>
+  </section>
+
+  <!-- GALERÍA DE PRODUCTOS (HOVER, TOOLTIP, DESCUENTO) -->
+  <section class="productos">
+    <!-- Producto 1 -->
+    <div class="producto-card">
+      <img class="producto-imagen" src="sandia.jpg" alt="Sandía">
+      <div class="producto-info">
+        <h4>Sandía</h4>
+        <p>$150.00</p>
+      </div>
+      <div class="tooltip">Información detallada de la sandía.</div>
+      <div class="descuento-badge">-10%</div>
+    </div>
+
+    <!-- Producto 2 -->
+    <div class="producto-card">
+      <img class="producto-imagen" src="herbi.jpg" alt="Herbicida">
+      <div class="producto-info">
+        <h4>Herbicida</h4>
+        <p>$90.00</p>
+      </div>
+      <div class="tooltip">Detalles del herbicida.</div>
+      <div class="descuento-badge">-15%</div>
+    </div>
+
+    <!-- Producto 3 -->
+    <div class="producto-card">
+      <img class="producto-imagen" src="fungi.jpg" alt="Fungicida">
+      <div class="producto-info">
+        <h4>Fungicida</h4>
+        <p>$85.00</p>
+      </div>
+      <div class="tooltip">Detalles del fungicida.</div>
+      <div class="descuento-badge">-8%</div>
+    </div>
+
+    <!-- Producto 4 -->
+    <div class="producto-card">
+      <img class="producto-imagen" src="cala.jpg" alt="Calabaza">
+      <div class="producto-info">
+        <h4>Calabaza</h4>
+        <p>$120.00</p>
+      </div>
+      <div class="tooltip">Recomendaciones de siembra para calabaza.</div>
+      <div class="descuento-badge">-5%</div>
+    </div>
+  </section>
+
+
+  <!-- SCRIPT 1: MENSAJE DE BIENVENIDA (HORA/FECHA) -->
+  <script>
+    window.addEventListener('load', function() {
+      const date = new Date();
+      const hour = date.getHours();
+      let greeting;
+
+      if (hour < 12) {
+        greeting = "¡Buenos días!";
+      } else if (hour < 19) {
+        greeting = "¡Buenas tardes!";
+      } else {
+        greeting = "¡Buenas noches!";
+      }
+
+      const opcionesFecha = { year: 'numeric', month: 'numeric', day: 'numeric' };
+      const opcionesHora = { hour: '2-digit', minute: '2-digit' };
+
+      const fechaFormateada = date.toLocaleDateString('es-ES', opcionesFecha);
+      const horaFormateada = date.toLocaleTimeString('es-ES', opcionesHora);
+
+      const mensajeCompleto = `${greeting} Hoy es ${fechaFormateada}, y son las ${horaFormateada}.`;
+      document.getElementById('mensaje-bienvenida').textContent = mensajeCompleto;
+    });
+  </script>
+
+  <!-- SCRIPT 2: CARRUSEL DE IMÁGENES -->
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    // Cuántas slides hay
+    const slides = Array.from(track.children);
+    let currentIndex = 0; // Slide actual
+
+    // Función para mover el track al slide actual
+    function updateSlidePosition() {
+      track.style.transform = `translateX(-${100 * currentIndex}%)`;
+    }
+
+    // Avanzar al siguiente slide
+    nextBtn.addEventListener('click', () => {
+      currentIndex++;
+      if (currentIndex >= slides.length) {
+        currentIndex = 0;
+      }
+      updateSlidePosition();
+    });
+
+    // Retroceder al anterior
+    prevBtn.addEventListener('click', () => {
+      currentIndex--;
+      if (currentIndex < 0) {
+        currentIndex = slides.length - 1;
+      }
+      updateSlidePosition();
+    });
+
+    // (Opcional) Auto-play cada 4 seg
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      updateSlidePosition();
+    }, 4000);
+  </script>
+</body>
+</html>
